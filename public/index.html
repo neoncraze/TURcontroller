@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/humanize-duration/3.27.0/humanize-duration.min.js"
+      integrity="sha512-C6XM91cD52KknT8jaQF1P2PrIRTrbMzq6hzFkc22Pionu774sZwVPJInNxfHNwPvPne3AMtnRWKunr9+/gQR5g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function (event) {
+        function GetWSAddress() {
+          if (window.location.protocol == "https:") {
+            return `wss://${location.hostname}`;
+          } else {
+            return `ws://${location.hostname}`;
+          }
+        }
+
+        if ("WebSocket" in window) {
+          // Let us open a web socket
+          var ws = new WebSocket(GetWSAddress());
+          var lastSent = Date.now();
+          var rtt = 0;
+
+          console.log("Websocket connection opened");
+          console.log(navigator.userAgent);
+
+          document.addEventListener("keypress", (e) => {
+            ws.send(` ${e.code}`);
+
+            lastSent = Date.now();
+            console.log(`Sent[${lastSent}]: ${e.code}`);
+
+            document.getElementById(
+              "last-keypress"
+            ).innerHTML = `Last keypress: ${e.code}`;
+          });
+
+          ws.onmessage = () => {
+            rtt = Date.now() - lastSent;
+            document.getElementById("rtt").innerHTML = `RTT: ${humanizeDuration(
+              rtt / 2
+            )}`;
+          };
+
+          ws.onclose = () => {
+            ws = new WebSocket(GetWSAddress());
+          };
+        } else {
+          // The browser doesn't support WebSocket
+          alert("WebSocket NOT supported by your Browser!");
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="last-keypress">Last keypress: None</div>
+    <div id="rtt">RTT: 0ms</div>
+  </body>
+</html>

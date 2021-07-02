@@ -1,12 +1,10 @@
 {
-  "name": "tur-controller",
+  "name": "tur-controller-host",
   "version": "1.0.0",
   "description": "The Universal Remote controller",
   "homepage": "./",
-  "main": "./electron/main.js",
+  "main": "./server.ts",
   "scripts": {
-    "dev": "concurrently 'npm start' 'wait-on http://localhost:3000 && electron .'",
-    "ebuild": "npm run build && node_modules/.bin/build",
     "start": "tsc || node ./dist/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
